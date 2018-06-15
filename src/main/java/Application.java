@@ -5,28 +5,48 @@ import ecommercial.Product;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entry point of the application
+ * @author Ana Keredechieva
+ * @since 15.06.2018
+ */
 public class Application {
 
     public static void main(String[] args) {
 
-        Product product = new Product("Milk",3.15f);
-        Product product1 = new Product("Bread",1.5f);
-        CartItem cartItem = new CartItem(product, 2);
-        CartItem cartItem1 = new CartItem(product1,4);
-        List<CartItem> cartItems = new ArrayList<CartItem>();
-        cartItems.add(cartItem);
-        cartItems.add(cartItem1);
-        Cart cart = new Cart(cartItems);
-        System.out.println(product.toString());
-        System.out.println(cartItem.toString());
-        System.out.println(cartItem.totalPrice());
-        System.out.println(cart.toString());
-        System.out.println(cart.getVAT());
-        System.out.println(cart.getPriceWithTheDeliveryFee());
+        // Creating a product Milk
+        Product milk = new Product("Milk",3.15f);
+        //Creating a product Bread
+        Product bread = new Product("Bread",1.5f);
+        CartItem firstCartItem = new CartItem(milk, 2);
+        CartItem secondCartItem = new CartItem(bread,4);
         Product product2 = new Product("Sugar",2.65f);
         CartItem cartItem2 = new CartItem(product2,4);
+        //Creating new ArrayList for cart items
+        List<CartItem> cartItems = new ArrayList<CartItem>();
+        //Adding items into a cart
+        cartItems.add(firstCartItem);
+        cartItems.add(secondCartItem);
+        //Creating new cart
+        Cart cart = new Cart(cartItems);
+
+        //Printing on the console information about the product Milk
+        System.out.println(milk.toString());
+        //Printing the information about the item and the quantity
+        System.out.println(firstCartItem.toString());
+        //Printing total price of the products - number of product * their price
+        System.out.println(firstCartItem.totalPrice());
+        //Printing information about the cart
+        System.out.println(cart.toString());
+        //Printing the value of the VAT
+        System.out.println(cart.getVAT());
+        //Total price of the cart
+        System.out.println(cart.getPriceWithTheDeliveryFee());
+
+        // add new item
         cart.addItem(cartItem2);
         System.out.println(cart.toString());
+        //delete item
         cart.removeItem(cartItem2);
         System.out.println(cart.toString());
     }
