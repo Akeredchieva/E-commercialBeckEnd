@@ -10,7 +10,6 @@ import java.util.List;
  */
 public class Cart {
 
-
     //The VAT value is calculated based ot 20% of the incomes. This constant represent this 20%.
     private static final float VAT_VALUE = 0.2f;
     private static final float MIN_DELIVERY_FEE = 0.0f;
@@ -18,7 +17,7 @@ public class Cart {
     private static final int DELIVERY_FEE_FIRST_BORDER = 100;
     private static final int DELIVERY_FEE_SECOND_BORDER = 200;
 
-    private List<CartItem> cartItems;
+    private List<CartItem> cartItems = new ArrayList<CartItem>();;
     private float deliveryFee;
 
     /**
@@ -26,9 +25,8 @@ public class Cart {
      * @param cartItem List of input items in the cart.
      */
     public Cart(List<CartItem> cartItem) {
-        this.cartItems = new ArrayList<CartItem>();
         this.setCartItems(cartItem);
-        this.DeliveryFee();
+        this.calculateDeliveryFeeWithVAT();
     }
 
     /**
@@ -39,7 +37,7 @@ public class Cart {
     public String toString() {
         return "Cart:\n" +
                 this.getCartItems().toString() +
-                "deliveryFee: " + this.DeliveryFee() + '\n';
+                "deliveryFee: " + this.calculateDeliveryFeeWithVAT() + '\n';
     }
 
     /**
@@ -47,10 +45,15 @@ public class Cart {
      * @param cartItem the input item which we want to add.
      */
     public void addItem(CartItem cartItem){
-        int theIndexOfItem = this.isTheItemPresent(cartItem);
+        int theIndexOfItem = this.TheIndexOfItemPresent(cartItem);
         if (theIndexOfItem!= NEGATIVE_INDEX_VALUE){
-            int fullQuantity = this.getCartItems().get(theIndexOfItem).getQuantity() + cartItem.quantity;
-            this.getCartItems().get(theIndexOfItem).setQuantity(fullQuantity);
+            int fullQuantity = this.getCartItems().
+                                        get(theIndexOfItem).
+                                        getQuantity()
+                    + cartItem.getQuantity();
+            this.getCartItems().
+                    get(theIndexOfItem).
+                    setQuantity(fullQuantity);
         } else {
             this.getCartItems().add(cartItem);
         }
@@ -76,10 +79,15 @@ public class Cart {
      * @throws IllegalArgumentException if we don't have this item in the cart.
      */
     public void removeItem(CartItem cartItem) {
-        if (this.getCartItems().contains(cartItem)) {
-            this.getCartItems().remove(cartItem);
-        } else {
-            throw new IllegalArgumentException("The object is not present.");
+        String inputItem = cartItem.getProduct().getLabel();
+        for (int i = 0; i < this.getCartItems().size(); i++){
+            String labelOfCurrentItem = this.getCartItems()
+                                                .get(i)
+                                                .getProduct()
+                                                .getLabel();
+            if (inputItem.equalsIgnoreCase(labelOfCurrentItem)) {
+                this.getCartItems().remove(cartItem);
+            }
         }
     }
 
@@ -107,7 +115,7 @@ public class Cart {
      * Calculation of the delivery fee - all items price plus VAT.
      * @return Float value of the calculation.
      */
-    private float DeliveryFee(){
+    private float calculateDeliveryFeeWithVAT(){
         float deliveryFee =  this.getAllItemsPrice() + this.getVAT();
         this.setDeliveryFee(deliveryFee);
         return deliveryFee;
@@ -126,7 +134,7 @@ public class Cart {
      * @return Float number of the calculation.
      */
     public float getVAT() {
-        return this.getAllItemsPrice()*VAT_VALUE;
+        return this.getAllItemsPrice() * VAT_VALUE;
     }
 
     /**
@@ -146,7 +154,7 @@ public class Cart {
      * @return Float number of the calculation.
      */
     public float getPriceWithTheDeliveryFee() {
-        float priceWithoutDeliveryFee = this.DeliveryFee();
+        float priceWithoutDeliveryFee = this.calculateDeliveryFeeWithVAT();
         if (priceWithoutDeliveryFee < DELIVERY_FEE_FIRST_BORDER ) {
             return priceWithoutDeliveryFee + 10;
         } else if (priceWithoutDeliveryFee < DELIVERY_FEE_SECOND_BORDER) {
@@ -161,13 +169,16 @@ public class Cart {
      * @param cartItem the input parameter for the item we are looking for.
      * @return the index of the parameter if it find it in the list. If it's not present then it return NEGATIVE_INDEX_VALUE.
      */
-    private int isTheItemPresent(CartItem cartItem){
+    private int TheIndexOfItemPresent(CartItem cartItem){
         List<CartItem> cartItemList = this.getCartItems();
-            for (CartItem cartItemFromList : cartItemList) {
-                if (cartItem.product.getLabel().equalsIgnoreCase(cartItemFromList.product.getLabel())) {
-                    return cartItemList.indexOf(cartItemFromList);
+            for (int i = 0; i < cartItemList.size(); i++){
+                String cartItemInput = cartItem.getProduct().getLabel();
+                String cartItemObject = cartItemList.get(i).getProduct().getLabel();
+                if (cartItemInput.equalsIgnoreCase(cartItemObject)) {
+                    return i;
                 }
             }
             return NEGATIVE_INDEX_VALUE;
     }
+
 }

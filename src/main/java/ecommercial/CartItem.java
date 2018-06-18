@@ -7,8 +7,8 @@ package ecommercial;
  */
 public class CartItem {
 
-    Product product;
-    int quantity;
+    private Product product;
+    private int quantity;
 
     /**
      * Basic constructor for set the properties from the input values.
